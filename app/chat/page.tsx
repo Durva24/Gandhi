@@ -4,7 +4,7 @@ import { Plus, Send } from 'lucide-react';
 
 interface Message {
   id: string;
-  role: string;
+  role: 'user' | 'assistant';
   content: string;
   createdAt: string;
 }
@@ -13,16 +13,6 @@ interface Chat {
   id: string;
   name: string;
   created_at: string;
-}
-
-interface ChatDetail {
-  chat: {
-    id: string;
-    name: string;
-    context: string;
-    createdAt: string;
-  };
-  messages: Message[];
 }
 
 export default function ChatInterface() {
@@ -54,9 +44,9 @@ export default function ChatInterface() {
 
   const fetchAllChats = async () => {
     try {
-      const response = await fetch('/api/get/chats');
+      const response = await fetch('/api/chat/route');
       const data = await response.json();
-      if (data.success) {
+      if (data.success && data.chats) {
         setChats(data.chats);
       }
     } catch (error) {
@@ -67,20 +57,20 @@ export default function ChatInterface() {
   const fetchChatHistory = async (chatId: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/get/chat?chatId=${chatId}`);
+      const response = await fetch(`/api/get/chat/route?chatId=${chatId}`);
       const data = await response.json();
-      if (data.success) {
+      if (data.success && data.messages) {
         setMessages(data.messages);
       }
     } catch (error) {
       console.error('Error fetching chat history:', error);
+      setMessages([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const createNewChat = async () => {
-    const newChatName = `Chat ${new Date().toLocaleDateString('en-IN')}`;
+  const createNewChat = () => {
     setSelectedChatId(null);
     setMessages([]);
     setInputMessage('');
@@ -94,7 +84,7 @@ export default function ChatInterface() {
     setSending(true);
 
     const tempUserMsg: Message = {
-      id: Date.now().toString(),
+      id: `temp-${Date.now()}`,
       role: 'user',
       content: userMessage,
       createdAt: new Date().toISOString()
@@ -103,7 +93,7 @@ export default function ChatInterface() {
     setMessages(prev => [...prev, tempUserMsg]);
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/chat/route', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -116,28 +106,33 @@ export default function ChatInterface() {
       const data = await response.json();
 
       if (data.success) {
-        if (!selectedChatId) {
+        if (!selectedChatId && data.chatId) {
           setSelectedChatId(data.chatId);
           fetchAllChats();
         }
 
         const aiMsg: Message = {
-          id: data.aiMessageId,
+          id: data.aiMessageId || `ai-${Date.now()}`,
           role: 'assistant',
-          content: data.aiMessage,
+          content: data.aiMessage || data.response,
           createdAt: new Date().toISOString()
         };
 
         setMessages(prev => {
           const filtered = prev.filter(m => m.id !== tempUserMsg.id);
-          return [...filtered, 
-            { ...tempUserMsg, id: data.userMessageId }, 
+          return [
+            ...filtered,
+            { ...tempUserMsg, id: data.userMessageId || tempUserMsg.id },
             aiMsg
           ];
         });
+      } else {
+        throw new Error(data.error || 'Failed to send message');
       }
     } catch (error) {
       console.error('Error sending message:', error);
+      setMessages(prev => prev.filter(m => m.id !== tempUserMsg.id));
+      alert('Failed to send message. Please try again.');
     } finally {
       setSending(false);
     }
@@ -151,114 +146,48 @@ export default function ChatInterface() {
   };
 
   return (
-    <div style={{
-      height: '100vh',
-      background: '#ffffff',
-      fontFamily: "'Inter', sans-serif",
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden'
-    }}>
-      <div style={{
-        padding: '16px 20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderBottom: '2px solid #050505'
-      }}>
-        <div style={{
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '16px',
-          fontWeight: 800,
-          letterSpacing: '1.5px',
-          color: '#050505'
-        }}>
+    <div className="h-screen bg-white font-sans flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="px-5 py-4 flex items-center justify-between border-b-2 border-black">
+        <div className="font-bold text-base tracking-widest text-black">
           FINANCIAL WISDOM CHAT
         </div>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        <div style={{
-          width: '280px',
-          borderRight: '2px solid #050505',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden'
-        }}>
-          <div style={{
-            padding: '16px',
-            borderBottom: '2px solid #050505'
-          }}>
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-[280px] border-r-2 border-black flex flex-col overflow-hidden">
+          <div className="p-4 border-b-2 border-black">
             <button
               onClick={createNewChat}
-              style={{
-                width: '100%',
-                background: '#C4F000',
-                border: '2px solid #050505',
-                padding: '12px',
-                fontSize: '11px',
-                fontWeight: 700,
-                color: '#050505',
-                cursor: 'pointer',
-                letterSpacing: '0.5px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
+              className="w-full bg-[#C4F000] border-2 border-black px-3 py-3 text-xs font-bold text-black cursor-pointer tracking-wide flex items-center justify-center gap-2 hover:bg-[#B0E000] active:scale-95 transition-all"
             >
               <Plus size={16} strokeWidth={3} />
               NEW CHAT
             </button>
           </div>
 
-          <div style={{
-            flex: 1,
-            overflow: 'auto',
-            padding: '12px'
-          }}>
+          <div className="flex-1 overflow-auto p-3">
             {chats.length === 0 ? (
-              <div style={{
-                padding: '20px',
-                textAlign: 'center',
-                fontSize: '11px',
-                fontWeight: 600,
-                color: '#050505',
-                opacity: 0.5
-              }}>
+              <div className="p-5 text-center text-xs font-semibold text-black opacity-50">
                 No chats yet
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div className="flex flex-col gap-2">
                 {chats.map(chat => (
                   <div
                     key={chat.id}
                     onClick={() => setSelectedChatId(chat.id)}
-                    style={{
-                      background: selectedChatId === chat.id ? '#C4F000' : '#fafafa',
-                      border: selectedChatId === chat.id ? '2px solid #050505' : '1px solid #e5e5e5',
-                      padding: '12px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
+                    className={`p-3 cursor-pointer transition-all ${
+                      selectedChatId === chat.id
+                        ? 'bg-[#C4F000] border-2 border-black'
+                        : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+                    }`}
                   >
-                    <div style={{
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      color: '#050505',
-                      marginBottom: '4px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap'
-                    }}>
+                    <div className="text-xs font-bold text-black mb-1 overflow-hidden text-ellipsis whitespace-nowrap">
                       {chat.name}
                     </div>
-                    <div style={{
-                      fontSize: '10px',
-                      fontWeight: 600,
-                      color: '#050505',
-                      opacity: 0.6
-                    }}>
+                    <div className="text-[10px] font-semibold text-black opacity-60">
                       {new Date(chat.created_at).toLocaleDateString('en-IN')}
                     </div>
                   </div>
@@ -268,61 +197,21 @@ export default function ChatInterface() {
           </div>
         </div>
 
-        <div style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden'
-        }}>
-          <div style={{
-            flex: 1,
-            overflow: 'auto',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px'
-          }}>
+        {/* Main Chat Area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-auto p-5 flex flex-col gap-4">
             {loading ? (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%'
-              }}>
-                <div style={{
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  color: '#050505',
-                  opacity: 0.6
-                }}>
+              <div className="flex items-center justify-center h-full">
+                <div className="text-xs font-bold text-black opacity-60">
                   Loading messages...
                 </div>
               </div>
             ) : messages.length === 0 ? (
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%',
-                gap: '12px'
-              }}>
-                <div style={{
-                  fontSize: '16px',
-                  fontWeight: 800,
-                  color: '#050505',
-                  letterSpacing: '1px'
-                }}>
+              <div className="flex flex-col items-center justify-center h-full gap-3">
+                <div className="text-base font-extrabold text-black tracking-wide">
                   START A CONVERSATION
                 </div>
-                <div style={{
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: '#050505',
-                  opacity: 0.6,
-                  textAlign: 'center',
-                  maxWidth: '400px'
-                }}>
+                <div className="text-xs font-semibold text-black opacity-60 text-center max-w-md">
                   Ask for financial wisdom inspired by Gandhi's principles of simplicity and mindful spending
                 </div>
               </div>
@@ -331,39 +220,20 @@ export default function ChatInterface() {
                 {messages.map(message => (
                   <div
                     key={message.id}
-                    style={{
-                      display: 'flex',
-                      justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
-                    }}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div style={{
-                      maxWidth: '70%',
-                      background: message.role === 'user' ? '#C4F000' : '#ffffff',
-                      border: '2px solid #050505',
-                      padding: '14px 16px',
-                      fontSize: '13px',
-                      fontWeight: 500,
-                      color: '#050505',
-                      lineHeight: '1.6'
-                    }}>
+                    <div
+                      className={`max-w-[70%] border-2 border-black px-4 py-3.5 text-[13px] font-medium text-black leading-relaxed ${
+                        message.role === 'user' ? 'bg-[#C4F000]' : 'bg-white'
+                      }`}
+                    >
                       {message.content}
                     </div>
                   </div>
                 ))}
                 {sending && (
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'flex-start'
-                  }}>
-                    <div style={{
-                      background: '#fafafa',
-                      border: '2px solid #e5e5e5',
-                      padding: '14px 16px',
-                      fontSize: '13px',
-                      fontWeight: 500,
-                      color: '#050505',
-                      animation: 'pulse 1.5s ease-in-out infinite'
-                    }}>
+                  <div className="flex justify-start">
+                    <div className="bg-gray-50 border-2 border-gray-200 px-4 py-3.5 text-[13px] font-medium text-black animate-pulse">
                       Thinking...
                     </div>
                   </div>
@@ -373,12 +243,8 @@ export default function ChatInterface() {
             )}
           </div>
 
-          <div style={{
-            padding: '16px 20px',
-            borderTop: '2px solid #050505',
-            display: 'flex',
-            gap: '12px'
-          }}>
+          {/* Input Area */}
+          <div className="px-5 py-4 border-t-2 border-black flex gap-3">
             <input
               type="text"
               value={inputMessage}
@@ -386,43 +252,22 @@ export default function ChatInterface() {
               onKeyPress={handleKeyPress}
               placeholder="Ask for financial wisdom..."
               disabled={sending}
-              style={{
-                flex: 1,
-                background: '#fafafa',
-                border: '2px solid #050505',
-                padding: '12px 16px',
-                fontSize: '13px',
-                fontWeight: 500,
-                color: '#050505',
-                outline: 'none'
-              }}
+              className="flex-1 bg-gray-50 border-2 border-black px-4 py-3 text-[13px] font-medium text-black outline-none disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <button
               onClick={sendMessage}
               disabled={!inputMessage.trim() || sending}
-              style={{
-                background: sending || !inputMessage.trim() ? '#f5f5f5' : '#C4F000',
-                border: '2px solid #050505',
-                padding: '12px 20px',
-                cursor: sending || !inputMessage.trim() ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: sending || !inputMessage.trim() ? 0.5 : 1
-              }}
+              className={`border-2 border-black px-5 py-3 flex items-center justify-center transition-all ${
+                sending || !inputMessage.trim()
+                  ? 'bg-gray-100 cursor-not-allowed opacity-50'
+                  : 'bg-[#C4F000] cursor-pointer hover:bg-[#B0E000] active:scale-95'
+              }`}
             >
               <Send size={18} strokeWidth={2.5} color="#050505" />
             </button>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.6; }
-        }
-      `}</style>
     </div>
   );
 }
