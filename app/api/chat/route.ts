@@ -32,7 +32,7 @@ interface ChatResponse {
 }
 
 async function handleChatMessage(request: ChatRequest): Promise<ChatResponse> {
-  let chatId = request.chatId;
+  let chatId: string = request.chatId || '';
   let chatName = request.chatName || `Financial Chat ${new Date().toLocaleDateString('en-IN')}`;
   let existingContext = '';
 
@@ -46,9 +46,9 @@ async function handleChatMessage(request: ChatRequest): Promise<ChatResponse> {
       .select()
       .single();
 
-    if (chatError) throw new Error(`Failed to create chat: ${chatError.message}`);
+    if (chatError || !newChat) throw new Error(`Failed to create chat: ${chatError?.message}`);
     chatId = newChat.id;
-    existingContext = newChat.context;
+    existingContext = newChat.context || '';
   } else {
     const { data: existingChat, error: fetchError } = await supabase
       .from('chats')
