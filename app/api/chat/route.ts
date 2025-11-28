@@ -249,24 +249,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const chatId = searchParams.get('chatId');
-
-    if (chatId) {
-      const result = await getChatHistory(chatId);
-      return NextResponse.json(result);
-    } else {
-      const result = await getAllChats();
-      return NextResponse.json(result);
-    }
-  } catch (error: any) {
-    console.error('Chat API Error:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
