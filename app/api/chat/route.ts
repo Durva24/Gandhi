@@ -2,14 +2,27 @@ import { createClient } from '@supabase/supabase-js';
 import Groq from 'groq-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Initialize clients with error checking
+function getSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!url || !key) {
+    throw new Error('Supabase credentials not configured');
+  }
+  
+  return createClient(url, key);
+}
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY!
-});
+function getGroqClient() {
+  const apiKey = process.env.GROQ_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('Groq API key not configured');
+  }
+  
+  return new Groq({ apiKey });
+}
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -32,6 +45,9 @@ interface ChatResponse {
 }
 
 async function handleChatMessage(request: ChatRequest): Promise<ChatResponse> {
+  const supabase = getSupabaseClient();
+  const groq = getGroqClient();
+  
   let chatId: string = request.chatId || '';
   let chatName = request.chatName || `Financial Chat ${new Date().toLocaleDateString('en-IN')}`;
   let existingContext = '';
@@ -154,6 +170,8 @@ The message should be warm, philosophical yet practical. The context should summ
 }
 
 async function getChatHistory(chatId: string) {
+  const supabase = getSupabaseClient();
+  
   const { data: chat, error: chatError } = await supabase
     .from('chats')
     .select('*')
@@ -178,6 +196,8 @@ async function getChatHistory(chatId: string) {
 }
 
 async function getAllChats() {
+  const supabase = getSupabaseClient();
+  
   const { data: chats, error } = await supabase
     .from('chats')
     .select('id, name, created_at')
@@ -195,13 +215,37 @@ async function getAllChats() {
 export async function POST(req: NextRequest) {
   try {
     const body: ChatRequest = await req.json();
+    
+    // Validate request
+    if (!body.message || typeof body.message !== 'string') {
+      return NextResponse.json(
+        { success: false, error: 'Message is required' },
+        { status: 400 }
+      );
+    }
+    
     const result = await handleChatMessage(body);
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('Chat API Error:', error);
+    
+    // More specific error messages
+    let errorMessage = 'Internal server error';
+    let statusCode = 500;
+    
+    if (error.message?.includes('Supabase credentials')) {
+      errorMessage = 'Database configuration error';
+    } else if (error.message?.includes('Groq API key')) {
+      errorMessage = 'AI service configuration error';
+    } else if (error.message?.includes('Failed to')) {
+      errorMessage = error.message;
+    } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+      errorMessage = 'Connection error';
+    }
+    
     return NextResponse.json(
-      { success: false, error: error.message || 'Internal server error' },
-      { status: 500 }
+      { success: false, error: errorMessage },
+      { status: statusCode }
     );
   }
 }
