@@ -267,7 +267,7 @@ export default function GandhiPage() {
           <div className="text-lg sm:text-xl md:text-2xl font-display font-bold tracking-tighter uppercase cursor-pointer">Gandhi</div>
           <Link href="/home">
             <button className="brutal-border px-3 sm:px-4 py-1.5 sm:py-2 font-bold text-xs md:text-sm uppercase bg-black text-acid-green hover:bg-acid-green hover:text-black transition-colors duration-200 animate-ripple">
-              Face The Truth
+              Try Demo
             </button>
           </Link>
         </nav>
@@ -669,7 +669,7 @@ export default function GandhiPage() {
             </p>
             <Link href="/home">
               <button className="bg-acid-green text-black font-bold text-base sm:text-lg md:text-2xl px-6 sm:px-10 py-3 sm:py-5 brutal-border hover:translate-x-1 hover:translate-y-1 hover:shadow-none brutal-shadow transition-all uppercase">
-                Begin The Journey
+                Try Demo
               </button>
             </Link>
           </div>
