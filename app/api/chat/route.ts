@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import Groq from 'groq-sdk';
+import { NextRequest, NextResponse } from 'next/server';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,7 +31,7 @@ interface ChatResponse {
   context: string;
 }
 
-export async function handleChatMessage(request: ChatRequest): Promise<ChatResponse> {
+async function handleChatMessage(request: ChatRequest): Promise<ChatResponse> {
   let chatId = request.chatId;
   let chatName = request.chatName || `Financial Chat ${new Date().toLocaleDateString('en-IN')}`;
   let existingContext = '';
@@ -152,7 +153,7 @@ The message should be warm, philosophical yet practical. The context should summ
   };
 }
 
-export async function getChatHistory(chatId: string) {
+async function getChatHistory(chatId: string) {
   const { data: chat, error: chatError } = await supabase
     .from('chats')
     .select('*')
@@ -176,7 +177,7 @@ export async function getChatHistory(chatId: string) {
   };
 }
 
-export async function getAllChats() {
+async function getAllChats() {
   const { data: chats, error } = await supabase
     .from('chats')
     .select('id, name, created_at')
@@ -188,4 +189,40 @@ export async function getAllChats() {
     success: true,
     chats
   };
+}
+
+// Next.js API Route Handlers
+export async function POST(req: NextRequest) {
+  try {
+    const body: ChatRequest = await req.json();
+    const result = await handleChatMessage(body);
+    return NextResponse.json(result);
+  } catch (error: any) {
+    console.error('Chat API Error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message || 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const chatId = searchParams.get('chatId');
+
+    if (chatId) {
+      const result = await getChatHistory(chatId);
+      return NextResponse.json(result);
+    } else {
+      const result = await getAllChats();
+      return NextResponse.json(result);
+    }
+  } catch (error: any) {
+    console.error('Chat API Error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message || 'Internal server error' },
+      { status: 500 }
+    );
+  }
 }
