@@ -1,38 +1,96 @@
-[00:00:01.090] Server  LOG      ✓ Ready in 797ms
-[00:01:21.057] Server  LOG      ○ Compiling / ...
-[00:01:33.100] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:34.160] Browser WARN    Image with src "/monkey-eye.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:01:34.160] Browser WARN    Image with src "/monkey-ear.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:01:34.160] Browser WARN    Image with src "/monkey-mouth.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:02:21.780] Server  LOG      ✓ Compiled in 193ms
-[00:02:49.672] Server  LOG      ✓ Compiled in 163ms
-[00:02:51.738] Server  LOG      ✓ Compiled in 105ms
-[00:02:53.365] Server  LOG      ✓ Compiled in 65ms
-[00:03:25.464] Server  LOG      ✓ Compiled in 79ms
-[00:03:45.840] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:03:48.248] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:03:55.193] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:35.177] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:51.965] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:05:06.897] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:05:36.523] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:05:39.255] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:06:30.085] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:06:33.225] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:06:36.966] Server  LOG      ○ Compiling /plan ...
-[00:06:40.864] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:06:45.266] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:06:49.366] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:06:57.685] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:07:14.097] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:07:20.696] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:08:10.415] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:14:38.025] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:19:16.670] Server  LOG      ✓ Compiled in 194ms
-[00:19:52.472] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:22:45.784] Server  LOG      ✓ Compiled in 59ms
-[00:32:52.924] Server  LOG      ✓ Compiled in 112ms
-[00:32:58.299] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:49.770] Server  LOG      ✓ Compiled in 154ms
-[00:36:06.046] Server  LOG      ✓ Compiled in 334ms
-[00:42:00.163] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:01.089] Server  LOG      ✓ Ready in 831ms
+[00:00:04.279] Server  LOG      ○ Compiling /tax ...
+[00:00:08.540] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:09.012] Browser ERROR   Error: {}
+[00:00:09.012] Browser ERROR   uncaughtError: TypeError: can't access property "income", data is null
+[00:00:40.075] Server  LOG      ✓ Compiled in 171ms
+[00:00:40.507] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:00:41.941] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:01.801] Browser ERROR   uncaughtError: TypeError: window.jsPDF is undefined
+[00:03:52.039] Server  LOG      ✓ Compiled in 316ms
+[00:04:33.729] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:12:01.144] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:12:02.765] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:12:09.437] Server  LOG      ○ Compiling /plan ...
+[00:12:12.129] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:12:16.065] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:12:18.125] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:13:53.286] Server  LOG      ✓ Compiled in 114ms
+[00:14:00.634] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:14:18.854] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:14:28.204] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:31.790] Server  LOG      ✓ Compiled in 56ms
+[00:17:56.037] Server  LOG      ✓ Compiled in 47ms
+[00:19:57.083] Server  LOG      ✓ Compiled in 66ms
+[00:20:00.083] Server  LOG      ✓ Compiled in 40ms
+[00:20:05.932] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:21:09.822] Server  LOG      ✓ Compiled in 148ms
+[00:21:33.207] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:22:16.449] Server  LOG      ✓ Compiled in 45ms
+[00:22:25.393] Server  LOG      ✓ Compiled in 50ms
+[00:22:26.384] Browser ERROR   ./app/funds/page.tsx:40:14
+Parsing ecmascript source code failed
+  38 |       priceChange: -2500,
+  39 |       category: 'Electronics',
+> 40 |       image: '
+     |              ^
+  41 |     },
+  42 |     {
+  43 |       id: '2',
+
+Unterminated string constant
+
+Import traces:
+  Client Component Browser:
+    ./app/funds/page.tsx [Client Component Browser]
+    ./app/funds/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/funds/page.tsx [Client Component SSR]
+    ./app/funds/page.tsx [Server Component]
+[00:22:27.608] Browser ERROR   ./app/funds/page.tsx:40:14
+Parsing ecmascript source code failed
+  38 |       priceChange: -2500,
+  39 |       category: 'Electronics',
+> 40 |       image: 'https://m.media-amazon.com/images/I/81SigpJN1KL._SL1500_.jpg
+     |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  41 |     },
+  42 |     {
+  43 |       id: '2',
+
+Unterminated string constant
+
+Import traces:
+  Client Component Browser:
+    ./app/funds/page.tsx [Client Component Browser]
+    ./app/funds/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/funds/page.tsx [Client Component SSR]
+    ./app/funds/page.tsx [Server Component]
+[00:22:29.326] Browser ERROR   ./app/funds/page.tsx:40:14
+Parsing ecmascript source code failed
+  38 |       priceChange: -2500,
+  39 |       category: 'Electronics',
+> 40 |       image: 'https://m.media-amazon.com/images/I/81SigpJN1KL._SL1500_.jpg;
+     |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  41 |     },
+  42 |     {
+  43 |       id: '2',
+
+Unterminated string constant
+
+Import traces:
+  Client Component Browser:
+    ./app/funds/page.tsx [Client Component Browser]
+    ./app/funds/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/funds/page.tsx [Client Component SSR]
+    ./app/funds/page.tsx [Server Component]
+[00:22:30.220] Server  LOG      ✓ Compiled in 48ms
+[00:22:36.768] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:22:44.967] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:23:02.323] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:23:11.396] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:23:30.774] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

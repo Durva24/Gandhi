@@ -1,17 +1,28 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Send } from 'lucide-react';
+import { Plus, Send, ArrowLeft } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Missing Supabase environment variables');
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  createdAt: string;
+  created_at: string;
 }
 
 interface Chat {
   id: string;
   name: string;
+  context: string;
   created_at: string;
 }
 
@@ -44,9 +55,10 @@ export default function ChatInterface() {
 
   const fetchAllChats = async () => {
     try {
-      const response = await fetch('/api/chat/route');
+      const response = await fetch('/api/chat');
       const data = await response.json();
-      if (data.success && data.chats) {
+      
+      if (data.chats) {
         setChats(data.chats);
       }
     } catch (error) {
@@ -57,10 +69,13 @@ export default function ChatInterface() {
   const fetchChatHistory = async (chatId: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/get/chat/route?chatId=${chatId}`);
+      const response = await fetch(`/api/chat?chatId=${chatId}`);
       const data = await response.json();
-      if (data.success && data.messages) {
+
+      if (data.chat && data.messages) {
         setMessages(data.messages);
+      } else {
+        setMessages([]);
       }
     } catch (error) {
       console.error('Error fetching chat history:', error);
@@ -77,62 +92,82 @@ export default function ChatInterface() {
   };
 
   const sendMessage = async () => {
-    if (!inputMessage.trim() || sending) return;
+    if (!inputMessage.trim() || sending) {
+      console.log('Cannot send - input empty or already sending');
+      return;
+    }
 
     const userMessage = inputMessage.trim();
+    console.log('Sending message:', userMessage);
     setInputMessage('');
     setSending(true);
 
+    // Optimistically add user message to UI
     const tempUserMsg: Message = {
-      id: `temp-${Date.now()}`,
+      id: `temp-user-${Date.now()}`,
       role: 'user',
       content: userMessage,
-      createdAt: new Date().toISOString()
+      created_at: new Date().toISOString()
     };
 
     setMessages(prev => [...prev, tempUserMsg]);
 
     try {
-      const response = await fetch('/api/chat/route', {
+      console.log('Fetching with chatId:', selectedChatId);
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chatId: selectedChatId,
-          message: userMessage,
-          chatName: `Chat ${new Date().toLocaleDateString('en-IN')}`
+          message: userMessage
         })
       });
 
-      const data = await response.json();
-
-      if (data.success) {
-        if (!selectedChatId && data.chatId) {
-          setSelectedChatId(data.chatId);
-          fetchAllChats();
-        }
-
-        const aiMsg: Message = {
-          id: data.aiMessageId || `ai-${Date.now()}`,
-          role: 'assistant',
-          content: data.aiMessage || data.response,
-          createdAt: new Date().toISOString()
-        };
-
-        setMessages(prev => {
-          const filtered = prev.filter(m => m.id !== tempUserMsg.id);
-          return [
-            ...filtered,
-            { ...tempUserMsg, id: data.userMessageId || tempUserMsg.id },
-            aiMsg
-          ];
-        });
-      } else {
-        throw new Error(data.error || 'Failed to send message');
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error response:', errorData);
+        throw new Error(errorData.error || 'Failed to send message');
       }
+
+      const data = await response.json();
+      console.log('Response data:', data);
+
+      // If this was a new chat, update the selected chat ID
+      if (!selectedChatId && data.chatId) {
+        console.log('New chat created:', data.chatId);
+        setSelectedChatId(data.chatId);
+        // Refresh the chats list to show the new chat
+        await fetchAllChats();
+      }
+
+      // Add AI response to messages
+      const aiMsg: Message = {
+        id: `ai-${Date.now()}`,
+        role: 'assistant',
+        content: data.message,
+        created_at: new Date().toISOString()
+      };
+
+      // Replace temp message and add AI response
+      setMessages(prev => {
+        const withoutTemp = prev.filter(m => m.id !== tempUserMsg.id);
+        return [
+          ...withoutTemp,
+          { ...tempUserMsg, id: `user-${Date.now()}` },
+          aiMsg
+        ];
+      });
+
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      // Remove temp message on error
       setMessages(prev => prev.filter(m => m.id !== tempUserMsg.id));
-      alert('Failed to send message. Please try again.');
+      
+      // Show error to user
+      alert(`Failed to send message: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setSending(false);
     }
@@ -145,12 +180,28 @@ export default function ChatInterface() {
     }
   };
 
+  const navigateToHome = () => {
+    window.location.href = '/home';
+  };
+
   return (
     <div className="h-screen bg-white font-sans flex flex-col overflow-hidden">
       {/* Header */}
       <div className="px-5 py-4 flex items-center justify-between border-b-2 border-black">
-        <div className="font-bold text-base tracking-widest text-black">
-          FINANCIAL WISDOM CHAT
+        <div className="flex items-center gap-3">
+          <button
+            onClick={navigateToHome}
+            className="bg-[#C4F000] border-2 border-black p-2 cursor-pointer hover:bg-[#B0E000] active:scale-95 transition-all"
+            aria-label="Back to home"
+          >
+            <ArrowLeft size={20} strokeWidth={2.5} color="#050505" />
+          </button>
+          <div className="font-bold text-base tracking-widest text-black">
+            FINANCIAL WISDOM CHAT
+          </div>
+        </div>
+        <div className="text-xs font-semibold text-black opacity-60">
+          Powered by Neysa + Pipeshift
         </div>
       </div>
 

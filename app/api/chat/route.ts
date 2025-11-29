@@ -1,251 +1,245 @@
 import { createClient } from '@supabase/supabase-js';
-import Groq from 'groq-sdk';
 import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from 'openai';
+import { getFinancialContext } from './context';
 
-// Initialize clients with error checking
-function getSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
-  if (!url || !key) {
-    throw new Error('Supabase credentials not configured');
-  }
-  
-  return createClient(url, key);
-}
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-function getGroqClient() {
-  const apiKey = process.env.GROQ_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error('Groq API key not configured');
-  }
-  
-  return new Groq({ apiKey });
-}
+// Initialize Neysa client via PipeShift (OpenAI-compatible)
+const neysa = new OpenAI({
+  baseURL: 'https://api.pipeshift.com/api/v0/',
+  apiKey: process.env.NEYSA_GROQ_API_KEY!
+});
 
-interface ChatMessage {
+interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
-interface ChatRequest {
-  chatId?: string;
-  message: string;
-  chatName?: string;
-}
-
-interface ChatResponse {
-  success: boolean;
-  chatId: string;
-  userMessageId: string;
-  aiMessageId: string;
-  aiMessage: string;
-  context: string;
-}
-
-async function handleChatMessage(request: ChatRequest): Promise<ChatResponse> {
-  const supabase = getSupabaseClient();
-  const groq = getGroqClient();
-  
-  let chatId: string = request.chatId || '';
-  let chatName = request.chatName || `Financial Chat ${new Date().toLocaleDateString('en-IN')}`;
-  let existingContext = '';
-
-  if (!chatId) {
-    const { data: newChat, error: chatError } = await supabase
-      .from('chats')
-      .insert({
-        name: chatName,
-        context: 'New financial wisdom conversation started.'
-      })
-      .select()
-      .single();
-
-    if (chatError || !newChat) throw new Error(`Failed to create chat: ${chatError?.message}`);
-    chatId = newChat.id;
-    existingContext = newChat.context || '';
-  } else {
-    const { data: existingChat, error: fetchError } = await supabase
-      .from('chats')
-      .select('context, name')
-      .eq('id', chatId)
-      .single();
-
-    if (fetchError) throw new Error(`Failed to fetch chat: ${fetchError.message}`);
-    existingContext = existingChat.context || '';
-    chatName = existingChat.name;
-  }
-
-  const { data: userMessageData, error: userMsgError } = await supabase
-    .from('messages')
-    .insert({
-      chat_id: chatId,
-      role: 'user',
-      content: request.message
-    })
-    .select()
-    .single();
-
-  if (userMsgError) throw new Error(`Failed to save user message: ${userMsgError.message}`);
-
-  const { data: previousMessages, error: historyError } = await supabase
-    .from('messages')
-    .select('role, content')
-    .eq('chat_id', chatId)
-    .order('created_at', { ascending: true })
-    .limit(10);
-
-  if (historyError) throw new Error(`Failed to fetch message history: ${historyError.message}`);
-
-  const conversationHistory: ChatMessage[] = previousMessages.map(msg => ({
-    role: msg.role as 'user' | 'assistant' | 'system',
-    content: msg.content
-  }));
-
-  const systemPrompt = `You are a wise financial advisor inspired by Mahatma Gandhi's principles of simplicity, frugality, and mindful living. Guide users on spending wisely, saving prudently, and living within their means.
-
-Previous Context: ${existingContext}
-
-You must respond with ONLY a valid JSON object in this exact format:
-{
-  "message": "Your Gandhi-inspired financial advice message here",
-  "context": "Brief summary of this conversation for future reference"
-}
-
-The message should be warm, philosophical yet practical. The context should summarize what was discussed and any key financial topics mentioned.`;
-
-  const completion = await groq.chat.completions.create({
-    messages: [
-      { role: 'system', content: systemPrompt },
-      ...conversationHistory
-    ],
-    model: 'llama-3.3-70b-versatile',
-    temperature: 0.7,
-    max_tokens: 1024,
-    response_format: { type: 'json_object' }
-  });
-
-  const aiResponseText = completion.choices[0]?.message?.content || '{"message":"Spend wisely, dear friend.","context":"General financial discussion."}';
-  
-  let aiResponse;
-  try {
-    aiResponse = JSON.parse(aiResponseText);
-  } catch (e) {
-    aiResponse = {
-      message: 'Dear friend, the path to financial wisdom begins with spending wisely and living simply.',
-      context: 'User seeking financial guidance on wise spending and budgeting.'
-    };
-  }
-
-  const { data: aiMessageData, error: aiMsgError } = await supabase
-    .from('messages')
-    .insert({
-      chat_id: chatId,
-      role: 'assistant',
-      content: aiResponse.message
-    })
-    .select()
-    .single();
-
-  if (aiMsgError) throw new Error(`Failed to save AI message: ${aiMsgError.message}`);
-
-  const updatedContext = `${existingContext}\n${aiResponse.context}`;
-
-  const { error: updateError } = await supabase
-    .from('chats')
-    .update({ context: updatedContext })
-    .eq('id', chatId);
-
-  if (updateError) throw new Error(`Failed to update context: ${updateError.message}`);
-
-  return {
-    success: true,
-    chatId,
-    userMessageId: userMessageData.id,
-    aiMessageId: aiMessageData.id,
-    aiMessage: aiResponse.message,
-    context: aiResponse.context
-  };
-}
-
-async function getChatHistory(chatId: string) {
-  const supabase = getSupabaseClient();
-  
-  const { data: chat, error: chatError } = await supabase
-    .from('chats')
-    .select('*')
-    .eq('id', chatId)
-    .single();
-
-  if (chatError) throw new Error(`Failed to fetch chat: ${chatError.message}`);
-
-  const { data: messages, error: messagesError } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('chat_id', chatId)
-    .order('created_at', { ascending: true });
-
-  if (messagesError) throw new Error(`Failed to fetch messages: ${messagesError.message}`);
-
-  return {
-    success: true,
-    chat,
-    messages
-  };
-}
-
-async function getAllChats() {
-  const supabase = getSupabaseClient();
-  
-  const { data: chats, error } = await supabase
-    .from('chats')
-    .select('id, name, created_at')
-    .order('created_at', { ascending: false });
-
-  if (error) throw new Error(`Failed to fetch chats: ${error.message}`);
-
-  return {
-    success: true,
-    chats
-  };
-}
-
-// Next.js API Route Handlers
 export async function POST(req: NextRequest) {
   try {
-    const body: ChatRequest = await req.json();
-    
-    // Validate request
-    if (!body.message || typeof body.message !== 'string') {
+    const { chatId, message } = await req.json();
+
+    if (!message || typeof message !== 'string') {
       return NextResponse.json(
-        { success: false, error: 'Message is required' },
+        { error: 'Message is required' },
         { status: 400 }
       );
     }
-    
-    const result = await handleChatMessage(body);
-    return NextResponse.json(result);
-  } catch (error: any) {
-    console.error('Chat API Error:', error);
-    
-    // More specific error messages
-    let errorMessage = 'Internal server error';
-    let statusCode = 500;
-    
-    if (error.message?.includes('Supabase credentials')) {
-      errorMessage = 'Database configuration error';
-    } else if (error.message?.includes('Groq API key')) {
-      errorMessage = 'AI service configuration error';
-    } else if (error.message?.includes('Failed to')) {
-      errorMessage = error.message;
-    } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-      errorMessage = 'Connection error';
+
+    let activeChatId = chatId;
+    let chatHistory: Message[] = [];
+
+    // Get user's financial data from context
+    const financialData = await getFinancialContext();
+
+    // If no chatId provided, create a new chat
+    if (!activeChatId) {
+      const { data: newChat, error: chatError } = await supabase
+        .from('chats')
+        .insert({
+          name: `Financial Chat ${new Date().toLocaleDateString('en-GB')}`,
+          context: 'New conversation with financial advisor'
+        })
+        .select()
+        .single();
+
+      if (chatError) {
+        console.error('Error creating chat:', chatError);
+        return NextResponse.json(
+          { error: 'Failed to create chat' },
+          { status: 500 }
+        );
+      }
+
+      activeChatId = newChat.id;
+    } else {
+      // Fetch conversation history (last 15 messages for better context)
+      const { data: messages, error: messagesError } = await supabase
+        .from('messages')
+        .select('role, content')
+        .eq('chat_id', activeChatId)
+        .order('created_at', { ascending: true })
+        .limit(15);
+
+      if (messagesError) {
+        console.error('Error fetching messages:', messagesError);
+      } else if (messages) {
+        chatHistory = messages as Message[];
+      }
     }
-    
+
+    // Save user message to database
+    const { error: userMsgError } = await supabase
+      .from('messages')
+      .insert({
+        chat_id: activeChatId,
+        role: 'user',
+        content: message
+      });
+
+    if (userMsgError) {
+      console.error('Error saving user message:', userMsgError);
+      return NextResponse.json(
+        { error: 'Failed to save message' },
+        { status: 500 }
+      );
+    }
+
+    // Build concise system prompt with Gandhi's essence
+    const systemPrompt = `You are Gandhi, a wise friend giving financial advice. Speak naturally and warmly.
+
+CRITICAL: Reply in the SAME LANGUAGE the user writes in. If they write in Hindi, reply in Hindi. If English, reply in English. If mixed, match their style.
+
+YOUR FINANCIAL DATA:
+${JSON.stringify(financialData, null, 2)}
+
+GANDHI'S MONEY WISDOM:
+- Live simply, save wisely
+- Avoid debt like poison
+- Needs before wants
+- Financial freedom = true freedom
+
+RESPONSE STYLE:
+- Answer ONLY what is asked - nothing extra
+- Keep it SHORT (2-3 sentences max)
+- Use their specific numbers when relevant
+- Be warm but direct - no lectures, no extra advice unless asked
+- Add occasional natural expressions: "beta", "my friend"
+- If they ask one thing, answer only that one thing
+
+Example: 
+User: "How much should I save?" 
+Reply: "Beta, save at least 30% of your income. With your ₹50,000 salary, that's ₹15,000 monthly."
+
+NOT: "Beta, save at least 30% of your income. With your ₹50,000 salary, that's ₹15,000 monthly. Also reduce dining expenses, build emergency fund, invest in mutual funds..." ❌
+
+Answer ONLY the question asked. REPLY IN THEIR LANGUAGE.`;
+
+    const apiMessages: Message[] = [
+      {
+        role: 'system',
+        content: systemPrompt
+      },
+      ...chatHistory,
+      {
+        role: 'user',
+        content: message
+      }
+    ];
+
+    // Get AI response using Neysa API
+    const completion = await neysa.chat.completions.create({
+      model: 'neysa-qwen3-vl-30b-a3b',
+      messages: apiMessages,
+      max_tokens: 500, // Reduced for shorter responses
+      temperature: 0.8,
+      top_p: 0.9,
+      frequency_penalty: 0.5, // Higher to avoid repetition
+      presence_penalty: 0.3
+    });
+
+    const aiResponse = completion.choices[0]?.message?.content || 
+      'My friend, something went wrong. Ask again?';
+
+    // Save AI response to database
+    const { error: aiMsgError } = await supabase
+      .from('messages')
+      .insert({
+        chat_id: activeChatId,
+        role: 'assistant',
+        content: aiResponse
+      });
+
+    if (aiMsgError) {
+      console.error('Error saving AI message:', aiMsgError);
+      return NextResponse.json(
+        { error: 'Failed to save AI response' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      chatId: activeChatId,
+      message: aiResponse
+    });
+
+  } catch (error) {
+    console.error('Error in chat API:', error);
     return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: statusCode }
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+// GET endpoint to fetch chat history
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const chatId = searchParams.get('chatId');
+
+    if (!chatId) {
+      // Return all chats
+      const { data: chats, error } = await supabase
+        .from('chats')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching chats:', error);
+        return NextResponse.json(
+          { error: 'Failed to fetch chats' },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({ chats });
+    }
+
+    // Fetch specific chat with messages
+    const { data: chat, error: chatError } = await supabase
+      .from('chats')
+      .select('*')
+      .eq('id', chatId)
+      .single();
+
+    if (chatError) {
+      console.error('Error fetching chat:', chatError);
+      return NextResponse.json(
+        { error: 'Chat not found' },
+        { status: 404 }
+      );
+    }
+
+    const { data: messages, error: messagesError } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('chat_id', chatId)
+      .order('created_at', { ascending: true });
+
+    if (messagesError) {
+      console.error('Error fetching messages:', messagesError);
+      return NextResponse.json(
+        { error: 'Failed to fetch messages' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      chat,
+      messages
+    });
+
+  } catch (error) {
+    console.error('Error in chat API GET:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
     );
   }
 }

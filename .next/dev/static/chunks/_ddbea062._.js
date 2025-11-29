@@ -22,7 +22,9 @@ function FundsPage() {
     _s();
     const [funds, setFunds] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
-    const [wishlist] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([
+    const [wishlistLoading, setWishlistLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
+    const [wishlist, setWishlist] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const defaultWishlist = [
         {
             id: '1',
             name: 'iPhone 15 Pro',
@@ -51,7 +53,7 @@ function FundsPage() {
             lastUpdated: '1d ago',
             priceChange: 0,
             category: 'Audio',
-            image: 'https://m.media-amazon.com/images/I/61vJBqg+YjL._SL1500_.jpg'
+            image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'
         },
         {
             id: '4',
@@ -63,10 +65,11 @@ function FundsPage() {
             category: 'Laptop',
             image: 'https://m.media-amazon.com/images/I/71TPda7cwUL._SL1500_.jpg'
         }
-    ]);
+    ];
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "FundsPage.useEffect": ()=>{
             fetchFunds();
+            fetchWishlist();
         }
     }["FundsPage.useEffect"], []);
     const fetchFunds = async ()=>{
@@ -80,6 +83,18 @@ function FundsPage() {
         } catch (error) {
             console.error('Error fetching funds:', error);
             setLoading(false);
+        }
+    };
+    const fetchWishlist = async ()=>{
+        try {
+            setWishlistLoading(true);
+            await new Promise((resolve)=>setTimeout(resolve, 3500));
+            setWishlist(defaultWishlist);
+            setWishlistLoading(false);
+        } catch (error) {
+            console.error('Error fetching wishlist:', error);
+            setWishlist(defaultWishlist);
+            setWishlistLoading(false);
         }
     };
     const formatCurrency = (amount)=>{
@@ -129,12 +144,12 @@ function FundsPage() {
                         }
                     }, void 0, false, {
                         fileName: "[project]/app/funds/page.tsx",
-                        lineNumber: 125,
+                        lineNumber: 141,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/funds/page.tsx",
-                    lineNumber: 118,
+                    lineNumber: 134,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("style", {
@@ -146,13 +161,13 @@ function FundsPage() {
         `
                 }, void 0, false, {
                     fileName: "[project]/app/funds/page.tsx",
-                    lineNumber: 133,
+                    lineNumber: 149,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/funds/page.tsx",
-            lineNumber: 110,
+            lineNumber: 126,
             columnNumber: 7
         }, this);
     }
@@ -193,7 +208,7 @@ function FundsPage() {
                                 justifyContent: 'center',
                                 cursor: 'pointer',
                                 textDecoration: 'none',
-                                color: '#050505',
+                                color: '#ffffff',
                                 fontWeight: 800
                             },
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$left$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowLeft$3e$__["ArrowLeft"], {
@@ -201,12 +216,12 @@ function FundsPage() {
                                 strokeWidth: 3
                             }, void 0, false, {
                                 fileName: "[project]/app/funds/page.tsx",
-                                lineNumber: 177,
+                                lineNumber: 193,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/funds/page.tsx",
-                            lineNumber: 161,
+                            lineNumber: 177,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -220,18 +235,18 @@ function FundsPage() {
                             children: "SAVINGS & WISHLIST"
                         }, void 0, false, {
                             fileName: "[project]/app/funds/page.tsx",
-                            lineNumber: 179,
+                            lineNumber: 195,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/funds/page.tsx",
-                    lineNumber: 160,
+                    lineNumber: 176,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/funds/page.tsx",
-                lineNumber: 153,
+                lineNumber: 169,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -266,31 +281,31 @@ function FundsPage() {
                                         style: {
                                             fontSize: '11px',
                                             fontWeight: 700,
-                                            color: '#050505',
+                                            color: '#ffffff',
                                             letterSpacing: '0.8px'
                                         },
                                         children: "SAVED"
                                     }, void 0, false, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 215,
+                                        lineNumber: 231,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         style: {
                                             fontSize: '22px',
                                             fontWeight: 800,
-                                            color: '#050505'
+                                            color: '#ffffff'
                                         },
                                         children: formatCurrency(stats.totalCurrent)
                                     }, void 0, false, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 218,
+                                        lineNumber: 234,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/funds/page.tsx",
-                                lineNumber: 205,
+                                lineNumber: 221,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -315,7 +330,7 @@ function FundsPage() {
                                         children: "PROGRESS"
                                     }, void 0, false, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 233,
+                                        lineNumber: 249,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -330,13 +345,13 @@ function FundsPage() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 236,
+                                        lineNumber: 252,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/funds/page.tsx",
-                                lineNumber: 223,
+                                lineNumber: 239,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -361,7 +376,7 @@ function FundsPage() {
                                         children: "TARGET"
                                     }, void 0, false, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 251,
+                                        lineNumber: 267,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -373,19 +388,19 @@ function FundsPage() {
                                         children: formatCurrency(stats.totalTarget)
                                     }, void 0, false, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 254,
+                                        lineNumber: 270,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/funds/page.tsx",
-                                lineNumber: 241,
+                                lineNumber: 257,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/funds/page.tsx",
-                        lineNumber: 201,
+                        lineNumber: 217,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -416,7 +431,7 @@ function FundsPage() {
                                         children: "FUNDS"
                                     }, void 0, false, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 275,
+                                        lineNumber: 291,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -443,7 +458,7 @@ function FundsPage() {
                                                     children: "🎯"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/funds/page.tsx",
-                                                    lineNumber: 299,
+                                                    lineNumber: 315,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -456,13 +471,13 @@ function FundsPage() {
                                                     children: "NO FUNDS"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/funds/page.tsx",
-                                                    lineNumber: 300,
+                                                    lineNumber: 316,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/funds/page.tsx",
-                                            lineNumber: 291,
+                                            lineNumber: 307,
                                             columnNumber: 17
                                         }, this) : funds.map((fund)=>{
                                             const progress = parseFloat(fund.progress);
@@ -502,7 +517,7 @@ function FundsPage() {
                                                                 }
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 336,
+                                                                lineNumber: 352,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -516,13 +531,13 @@ function FundsPage() {
                                                                 children: fund.name.toUpperCase()
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 337,
+                                                                lineNumber: 353,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/funds/page.tsx",
-                                                        lineNumber: 335,
+                                                        lineNumber: 351,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -535,19 +550,19 @@ function FundsPage() {
                                                         },
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             style: {
-                                                                background: '#00AA00',
+                                                                background: '#C4F000',
                                                                 height: '100%',
                                                                 width: `${Math.min(progress, 100)}%`,
                                                                 transition: 'width 0.5s ease-out'
                                                             }
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/funds/page.tsx",
-                                                            lineNumber: 355,
+                                                            lineNumber: 371,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/funds/page.tsx",
-                                                        lineNumber: 348,
+                                                        lineNumber: 364,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -570,7 +585,7 @@ function FundsPage() {
                                                                         children: "SAVED"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/funds/page.tsx",
-                                                                        lineNumber: 365,
+                                                                        lineNumber: 381,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -582,52 +597,52 @@ function FundsPage() {
                                                                         children: formatCurrency(fund.current_amount)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/funds/page.tsx",
-                                                                        lineNumber: 374,
+                                                                        lineNumber: 390,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 364,
+                                                                lineNumber: 380,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                 style: {
-                                                                    background: progress >= 100 ? 'rgba(5, 5, 5, 0.1)' : '#f5f5f5',
+                                                                    background: progress >= 100 ? 'rgba(34, 197, 94, 0.2)' : '#f5f5f5',
                                                                     border: '1px solid #050505',
                                                                     padding: '2px 6px',
                                                                     fontSize: '8px',
                                                                     fontWeight: 700,
-                                                                    color: progress >= 100 ? '#00AA00' : '#050505'
+                                                                    color: progress >= 100 ? '#C4F000' : '#050505'
                                                                 },
                                                                 children: progress >= 100 ? '✓' : `${progress.toFixed(0)}%`
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 382,
+                                                                lineNumber: 398,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/funds/page.tsx",
-                                                        lineNumber: 363,
+                                                        lineNumber: 379,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, fund.id, true, {
                                                 fileName: "[project]/app/funds/page.tsx",
-                                                lineNumber: 314,
+                                                lineNumber: 330,
                                                 columnNumber: 21
                                             }, this);
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 285,
+                                        lineNumber: 301,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/funds/page.tsx",
-                                lineNumber: 269,
+                                lineNumber: 285,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -649,10 +664,106 @@ function FundsPage() {
                                         children: "WISHLIST"
                                     }, void 0, false, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 407,
+                                        lineNumber: 423,
                                         columnNumber: 13
                                     }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    wishlistLoading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        style: {
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(3, 1fr)',
+                                            gap: '8px'
+                                        },
+                                        children: [
+                                            1,
+                                            2,
+                                            3,
+                                            4,
+                                            5,
+                                            6
+                                        ].map((i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                style: {
+                                                    background: '#f5f5f5',
+                                                    border: '2px solid #050505',
+                                                    padding: '10px',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    gap: '8px'
+                                                },
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        style: {
+                                                            width: '100%',
+                                                            height: '100px',
+                                                            overflow: 'hidden',
+                                                            border: '2px solid #050505',
+                                                            background: '#e5e5e5',
+                                                            animation: 'skeleton-pulse 1.5s ease-in-out infinite'
+                                                        }
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/funds/page.tsx",
+                                                        lineNumber: 451,
+                                                        columnNumber: 21
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        style: {
+                                                            height: '16px',
+                                                            background: '#e5e5e5',
+                                                            border: '1px solid #050505',
+                                                            animation: 'skeleton-pulse 1.5s ease-in-out infinite'
+                                                        }
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/funds/page.tsx",
+                                                        lineNumber: 460,
+                                                        columnNumber: 21
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        style: {
+                                                            height: '12px',
+                                                            background: '#e5e5e5',
+                                                            border: '1px solid #050505',
+                                                            animation: 'skeleton-pulse 1.5s ease-in-out infinite',
+                                                            width: '80%'
+                                                        }
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/funds/page.tsx",
+                                                        lineNumber: 467,
+                                                        columnNumber: 21
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        style: {
+                                                            height: '20px',
+                                                            background: '#e5e5e5',
+                                                            border: '1px solid #050505',
+                                                            animation: 'skeleton-pulse 1.5s ease-in-out infinite'
+                                                        }
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/funds/page.tsx",
+                                                        lineNumber: 475,
+                                                        columnNumber: 21
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        style: {
+                                                            height: '16px',
+                                                            background: '#e5e5e5',
+                                                            border: '1px solid #050505',
+                                                            animation: 'skeleton-pulse 1.5s ease-in-out infinite'
+                                                        }
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/funds/page.tsx",
+                                                        lineNumber: 482,
+                                                        columnNumber: 21
+                                                    }, this)
+                                                ]
+                                            }, i, true, {
+                                                fileName: "[project]/app/funds/page.tsx",
+                                                lineNumber: 440,
+                                                columnNumber: 19
+                                            }, this))
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/funds/page.tsx",
+                                        lineNumber: 434,
+                                        columnNumber: 15
+                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         style: {
                                             display: 'grid',
                                             gridTemplateColumns: 'repeat(3, 1fr)',
@@ -702,13 +813,13 @@ function FundsPage() {
                                                             }
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/funds/page.tsx",
-                                                            lineNumber: 457,
-                                                            columnNumber: 23
+                                                            lineNumber: 532,
+                                                            columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/funds/page.tsx",
-                                                        lineNumber: 446,
-                                                        columnNumber: 21
+                                                        lineNumber: 521,
+                                                        columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         style: {
@@ -727,15 +838,15 @@ function FundsPage() {
                                                         children: item.name.toUpperCase()
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/funds/page.tsx",
-                                                        lineNumber: 469,
-                                                        columnNumber: 21
+                                                        lineNumber: 544,
+                                                        columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         style: {
                                                             display: 'flex',
                                                             alignItems: 'center',
                                                             gap: '4px',
-                                                            background: item.priceChange < 0 ? '#00AA00' : item.priceChange > 0 ? '#DC2626' : '#f5f5f5',
+                                                            background: item.priceChange < 0 ? '#C4F000' : item.priceChange > 0 ? '#DC2626' : '#f5f5f5',
                                                             border: '1px solid #050505',
                                                             padding: '5px 7px',
                                                             justifyContent: 'center',
@@ -745,27 +856,27 @@ function FundsPage() {
                                                             item.priceChange < 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$down$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingDown$3e$__["TrendingDown"], {
                                                                 size: 10,
                                                                 strokeWidth: 3,
-                                                                color: "#ffffff"
+                                                                color: item.priceChange < 0 ? '#ffffff' : '#050505'
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 496,
-                                                                columnNumber: 25
+                                                                lineNumber: 571,
+                                                                columnNumber: 27
                                                             }, this) : item.priceChange > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
                                                                 size: 10,
                                                                 strokeWidth: 3,
                                                                 color: "#ffffff"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 498,
-                                                                columnNumber: 25
+                                                                lineNumber: 573,
+                                                                columnNumber: 27
                                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$minus$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Minus$3e$__["Minus"], {
                                                                 size: 10,
                                                                 strokeWidth: 3,
                                                                 color: "#050505"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 500,
-                                                                columnNumber: 25
+                                                                lineNumber: 575,
+                                                                columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 style: {
@@ -776,14 +887,14 @@ function FundsPage() {
                                                                 children: item.priceChange !== 0 ? formatCurrency(Math.abs(item.priceChange)) : 'SAME'
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 502,
-                                                                columnNumber: 23
+                                                                lineNumber: 577,
+                                                                columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/funds/page.tsx",
-                                                        lineNumber: 485,
-                                                        columnNumber: 21
+                                                        lineNumber: 560,
+                                                        columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         style: {
@@ -805,8 +916,8 @@ function FundsPage() {
                                                                         children: "NOW"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/funds/page.tsx",
-                                                                        lineNumber: 513,
-                                                                        columnNumber: 25
+                                                                        lineNumber: 588,
+                                                                        columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                         style: {
@@ -817,74 +928,86 @@ function FundsPage() {
                                                                         children: formatCurrency(item.currentPrice)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/funds/page.tsx",
-                                                                        lineNumber: 522,
-                                                                        columnNumber: 25
+                                                                        lineNumber: 597,
+                                                                        columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 512,
-                                                                columnNumber: 23
+                                                                lineNumber: 587,
+                                                                columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                 style: {
-                                                                    background: isPriceGood ? 'rgba(0, 170, 0, 0.15)' : 'rgba(220, 38, 38, 0.15)',
+                                                                    background: isPriceGood ? '#C4F000' : 'rgba(220, 38, 38, 0.15)',
                                                                     border: '1px solid #050505',
                                                                     padding: '4px 7px',
                                                                     fontSize: '8px',
                                                                     fontWeight: 700,
-                                                                    color: isPriceGood ? '#00AA00' : '#DC2626'
+                                                                    color: isPriceGood ? '#ffffff' : '#DC2626'
                                                                 },
                                                                 children: isPriceGood ? '✓ BUY' : 'WAIT'
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/funds/page.tsx",
-                                                                lineNumber: 530,
-                                                                columnNumber: 23
+                                                                lineNumber: 605,
+                                                                columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/funds/page.tsx",
-                                                        lineNumber: 511,
-                                                        columnNumber: 21
+                                                        lineNumber: 586,
+                                                        columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, item.id, true, {
                                                 fileName: "[project]/app/funds/page.tsx",
-                                                lineNumber: 426,
-                                                columnNumber: 19
+                                                lineNumber: 501,
+                                                columnNumber: 21
                                             }, this);
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/app/funds/page.tsx",
-                                        lineNumber: 417,
-                                        columnNumber: 13
+                                        lineNumber: 492,
+                                        columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/funds/page.tsx",
-                                lineNumber: 401,
+                                lineNumber: 417,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/funds/page.tsx",
-                        lineNumber: 261,
+                        lineNumber: 277,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/funds/page.tsx",
-                lineNumber: 192,
+                lineNumber: 208,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("style", {
+                children: `
+        @keyframes skeleton-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `
+            }, void 0, false, {
+                fileName: "[project]/app/funds/page.tsx",
+                lineNumber: 625,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/funds/page.tsx",
-        lineNumber: 144,
+        lineNumber: 160,
         columnNumber: 5
     }, this);
 }
-_s(FundsPage, "EhqkgYObGBGY8ejQFLhipBts5/U=");
+_s(FundsPage, "b/bEGrKfty5IWd+pMwoabfciaoA=");
 _c = FundsPage;
 var _c;
 __turbopack_context__.k.register(_c, "FundsPage");
