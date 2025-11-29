@@ -1,16 +1,16 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
+  "/api/chat/route": "app/api/chat/route.js",
   "/api/get/bills/route": "app/api/get/bills/route.js",
   "/api/get/funds/route": "app/api/get/funds/route.js",
   "/api/get/lendings/route": "app/api/get/lendings/route.js",
   "/api/get/portfolio/route": "app/api/get/portfolio/route.js",
   "/api/get/transactions/route": "app/api/get/transactions/route.js",
   "/api/get/users/route": "app/api/get/users/route.js",
-  "/funds/page": "app/funds/page.js",
+  "/api/price-search/route": "app/api/price-search/route.js",
+  "/chat/page": "app/chat/page.js",
   "/home/page": "app/home/page.js",
+  "/page": "app/page.js",
   "/plan/page": "app/plan/page.js",
-  "/portfolio/page": "app/portfolio/page.js",
   "/smartbuy/page": "app/smartbuy/page.js",
-  "/spend/page": "app/spend/page.js",
   "/tax/page": "app/tax/page.js"
 }
