@@ -25,8 +25,10 @@ interface WishlistItem {
 export default function FundsPage() {
   const [funds, setFunds] = useState<Fund[]>([]);
   const [loading, setLoading] = useState(true);
+  const [wishlistLoading, setWishlistLoading] = useState(true);
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
 
-  const [wishlist] = useState<WishlistItem[]>([
+  const defaultWishlist: WishlistItem[] = [
     {
       id: '1',
       name: 'iPhone 15 Pro',
@@ -55,7 +57,7 @@ export default function FundsPage() {
       lastUpdated: '1d ago',
       priceChange: 0,
       category: 'Audio',
-      image: 'https://m.media-amazon.com/images/I/61vJBqg+YjL._SL1500_.jpg'
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'
     },
     {
       id: '4',
@@ -67,10 +69,11 @@ export default function FundsPage() {
       category: 'Laptop',
       image: 'https://m.media-amazon.com/images/I/71TPda7cwUL._SL1500_.jpg'
     }
-  ]);
+  ];
 
   useEffect(() => {
     fetchFunds();
+    fetchWishlist();
   }, []);
 
   const fetchFunds = async () => {
@@ -85,6 +88,19 @@ export default function FundsPage() {
     } catch (error) {
       console.error('Error fetching funds:', error);
       setLoading(false);
+    }
+  };
+
+  const fetchWishlist = async () => {
+    try {
+      setWishlistLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 3500));
+      setWishlist(defaultWishlist);
+      setWishlistLoading(false);
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      setWishlist(defaultWishlist);
+      setWishlistLoading(false);
     }
   };
 
@@ -170,7 +186,7 @@ export default function FundsPage() {
               justifyContent: 'center',
               cursor: 'pointer',
               textDecoration: 'none',
-              color: '#050505',
+              color: '#ffffff',
               fontWeight: 800
             }}
           >
@@ -212,10 +228,10 @@ export default function FundsPage() {
             alignItems: 'center',
             gap: '6px'
           }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#050505', letterSpacing: '0.8px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff', letterSpacing: '0.8px' }}>
               SAVED
             </div>
-            <div style={{ fontSize: '22px', fontWeight: 800, color: '#050505' }}>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff' }}>
               {formatCurrency(stats.totalCurrent)}
             </div>
           </div>
@@ -353,7 +369,7 @@ export default function FundsPage() {
                         overflow: 'hidden'
                       }}>
                         <div style={{
-                          background: '#00AA00',
+                          background: '#C4F000',
                           height: '100%',
                           width: `${Math.min(progress, 100)}%`,
                           transition: 'width 0.5s ease-out'
@@ -380,12 +396,12 @@ export default function FundsPage() {
                           </div>
                         </div>
                         <div style={{
-                          background: progress >= 100 ? 'rgba(5, 5, 5, 0.1)' : '#f5f5f5',
+                          background: progress >= 100 ? 'rgba(34, 197, 94, 0.2)' : '#f5f5f5',
                           border: '1px solid #050505',
                           padding: '2px 6px',
                           fontSize: '8px',
                           fontWeight: 700,
-                          color: progress >= 100 ? '#00AA00' : '#050505'
+                          color: progress >= 100 ? '#C4F000' : '#050505'
                         }}>
                           {progress >= 100 ? '✓' : `${progress.toFixed(0)}%`}
                         </div>
@@ -414,33 +430,22 @@ export default function FundsPage() {
               WISHLIST
             </div>
             
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '8px'
-            }}>
-              {wishlist.map((item) => {
-                const isPriceGood = item.currentPrice <= item.targetPrice;
-                
-                return (
+            {wishlistLoading ? (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '8px'
+              }}>
+                {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div
-                    key={item.id}
+                    key={i}
                     style={{
-                      background: isPriceGood ? '#C4F000' : '#ffffff',
+                      background: '#f5f5f5',
                       border: '2px solid #050505',
                       padding: '10px',
                       display: 'flex',
                       flexDirection: 'column',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translate(-2px, -2px)';
-                      e.currentTarget.style.boxShadow = '-2px 2px 0px #050505';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translate(0, 0)';
-                      e.currentTarget.style.boxShadow = 'none';
+                      gap: '8px'
                     }}
                   >
                     <div style={{
@@ -448,103 +453,181 @@ export default function FundsPage() {
                       height: '100px',
                       overflow: 'hidden',
                       border: '2px solid #050505',
-                      background: '#ffffff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginBottom: '8px'
-                    }}>
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain',
-                          padding: '8px'
-                        }}
-                      />
-                    </div>
+                      background: '#e5e5e5',
+                      animation: 'skeleton-pulse 1.5s ease-in-out infinite'
+                    }} />
                     
                     <div style={{
-                      fontSize: '10px',
-                      fontWeight: 800,
-                      color: '#050505',
-                      lineHeight: '1.3',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      minHeight: '26px',
-                      marginBottom: '7px'
-                    }}>
-                      {item.name.toUpperCase()}
-                    </div>
-
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      background: item.priceChange < 0 ? '#00AA00' : item.priceChange > 0 ? '#DC2626' : '#f5f5f5',
+                      height: '16px',
+                      background: '#e5e5e5',
                       border: '1px solid #050505',
-                      padding: '5px 7px',
-                      justifyContent: 'center',
-                      marginBottom: '7px'
-                    }}>
-                      {item.priceChange < 0 ? (
-                        <TrendingDown size={10} strokeWidth={3} color="#ffffff" />
-                      ) : item.priceChange > 0 ? (
-                        <TrendingUp size={10} strokeWidth={3} color="#ffffff" />
-                      ) : (
-                        <Minus size={10} strokeWidth={3} color="#050505" />
-                      )}
-                      <span style={{
-                        fontSize: '8px',
-                        fontWeight: 800,
-                        color: item.priceChange !== 0 ? '#ffffff' : '#050505'
+                      animation: 'skeleton-pulse 1.5s ease-in-out infinite'
+                    }} />
+                    
+                    <div style={{
+                      height: '12px',
+                      background: '#e5e5e5',
+                      border: '1px solid #050505',
+                      animation: 'skeleton-pulse 1.5s ease-in-out infinite',
+                      width: '80%'
+                    }} />
+                    
+                    <div style={{
+                      height: '20px',
+                      background: '#e5e5e5',
+                      border: '1px solid #050505',
+                      animation: 'skeleton-pulse 1.5s ease-in-out infinite'
+                    }} />
+                    
+                    <div style={{
+                      height: '16px',
+                      background: '#e5e5e5',
+                      border: '1px solid #050505',
+                      animation: 'skeleton-pulse 1.5s ease-in-out infinite'
+                    }} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '8px'
+              }}>
+                {wishlist.map((item) => {
+                  const isPriceGood = item.currentPrice <= item.targetPrice;
+                  
+                  return (
+                    <div
+                      key={item.id}
+                      style={{
+                        background: isPriceGood ? '#C4F000' : '#ffffff',
+                        border: '2px solid #050505',
+                        padding: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translate(-2px, -2px)';
+                        e.currentTarget.style.boxShadow = '-2px 2px 0px #050505';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translate(0, 0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      <div style={{
+                        width: '100%',
+                        height: '100px',
+                        overflow: 'hidden',
+                        border: '2px solid #050505',
+                        background: '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '8px'
                       }}>
-                        {item.priceChange !== 0 ? formatCurrency(Math.abs(item.priceChange)) : 'SAME'}
-                      </span>
-                    </div>
+                        <img 
+                          src={item.image} 
+                          alt={item.name}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                            padding: '8px'
+                          }}
+                        />
+                      </div>
+                      
+                      <div style={{
+                        fontSize: '10px',
+                        fontWeight: 800,
+                        color: '#050505',
+                        lineHeight: '1.3',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        minHeight: '26px',
+                        marginBottom: '7px'
+                      }}>
+                        {item.name.toUpperCase()}
+                      </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
-                      <div>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        background: item.priceChange < 0 ? '#C4F000' : item.priceChange > 0 ? '#DC2626' : '#f5f5f5',
+                        border: '1px solid #050505',
+                        padding: '5px 7px',
+                        justifyContent: 'center',
+                        marginBottom: '7px'
+                      }}>
+                        {item.priceChange < 0 ? (
+                          <TrendingDown size={10} strokeWidth={3} color={item.priceChange < 0 ? '#ffffff' : '#050505'} />
+                        ) : item.priceChange > 0 ? (
+                          <TrendingUp size={10} strokeWidth={3} color="#ffffff" />
+                        ) : (
+                          <Minus size={10} strokeWidth={3} color="#050505" />
+                        )}
+                        <span style={{
+                          fontSize: '8px',
+                          fontWeight: 800,
+                          color: item.priceChange !== 0 ? '#ffffff' : '#050505'
+                        }}>
+                          {item.priceChange !== 0 ? formatCurrency(Math.abs(item.priceChange)) : 'SAME'}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
+                        <div>
+                          <div style={{
+                            fontSize: '8px',
+                            fontWeight: 700,
+                            color: '#050505',
+                            opacity: 0.5,
+                            marginBottom: '2px'
+                          }}>
+                            NOW
+                          </div>
+                          <div style={{
+                            fontSize: '12px',
+                            fontWeight: 800,
+                            color: '#050505'
+                          }}>
+                            {formatCurrency(item.currentPrice)}
+                          </div>
+                        </div>
                         <div style={{
+                          background: isPriceGood ? '#C4F000' : 'rgba(220, 38, 38, 0.15)',
+                          border: '1px solid #050505',
+                          padding: '4px 7px',
                           fontSize: '8px',
                           fontWeight: 700,
-                          color: '#050505',
-                          opacity: 0.5,
-                          marginBottom: '2px'
+                          color: isPriceGood ? '#ffffff' : '#DC2626'
                         }}>
-                          NOW
+                          {isPriceGood ? '✓ BUY' : 'WAIT'}
                         </div>
-                        <div style={{
-                          fontSize: '12px',
-                          fontWeight: 800,
-                          color: '#050505'
-                        }}>
-                          {formatCurrency(item.currentPrice)}
-                        </div>
-                      </div>
-                      <div style={{
-                        background: isPriceGood ? 'rgba(0, 170, 0, 0.15)' : 'rgba(220, 38, 38, 0.15)',
-                        border: '1px solid #050505',
-                        padding: '4px 7px',
-                        fontSize: '8px',
-                        fontWeight: 700,
-                        color: isPriceGood ? '#00AA00' : '#DC2626'
-                      }}>
-                        {isPriceGood ? '✓ BUY' : 'WAIT'}
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes skeleton-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 }
